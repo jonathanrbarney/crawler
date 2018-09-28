@@ -16,7 +16,7 @@ class domainPipeline(object):
         self.connection = sqlite.connect('./wpdomains.db')
         self.cursor = self.connection.cursor()
         self.cursor.execute('CREATE TABLE IF NOT EXISTS domains ' \
-                    '(id INTEGER PRIMARY KEY, domain VARCHAR(80) NOT NULL UNIQUE, wpcheck INTEGER) NOT NULL UNIQUE')
+                    '(id INTEGER PRIMARY KEY, domain VARCHAR(80) NOT NULL UNIQUE, wpcheck INTEGER NOT NULL UNIQUE)')
 
     # Check for duplicates and if not add table to db.
     def process_item(self, item, spider):
