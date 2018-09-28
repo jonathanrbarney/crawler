@@ -22,17 +22,17 @@ class domainPipeline(object):
     def process_item(self, item, spider):
 
         domain = item['domain']
+        if domain is not None:
+            self.cursor.execute("select * from domains where domain=?", (domain,))
+            result = self.cursor.fetchone()
+            if result:
+                log.msg("Domain already in database: %s" % item, level=log.DEBUG)
+            else:
+                self.cursor.execute(
+                    "insert into domains (domain, wpcheck) values (?, ?)",
+                        (domain, 2))
 
-        self.cursor.execute("select * from domains where domain=?", (domain,))
-        result = self.cursor.fetchone()
-        if result:
-            log.msg("Domain already in database: %s" % item, level=log.DEBUG)
-        else:
-            self.cursor.execute(
-                "insert into domains (domain, wpcheck) values (?, ?)",
-                    (domain, 2))
+                self.connection.commit()
 
-            self.connection.commit()
-
-            log.msg(f'Domain Stored: {domain}', level=log.DEBUG)
+                log.msg(f'Domain Stored: {domain}', level=log.DEBUG)
         return item
