@@ -6,7 +6,7 @@ from scrapy.contrib.linkextractors import LinkExtractor
 
 class DomainspiderSpider(scrapy.Spider):
     name = 'domainSpider'
-    ignore_urls = ['facebook.com','tumblr.com','youtube.com', 'baidu.com','twitter.com','wordpress.com']
+    ignore_urls = ['facebook.com','tumblr.com','youtube.com', 'baidu.com','twitter.com','wordpress.com','wikipedia.com']
     start_urls = ['https://blogforarizona.net/']
 
     def parse(self, response):
