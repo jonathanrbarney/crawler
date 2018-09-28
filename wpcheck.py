@@ -7,13 +7,15 @@
 
 import sqlite3 as sqlite
 import requests
+import itertools
 
 connection = sqlite.connect('./wpdomains.db')
 cursor = connection.cursor()
 
 q = cursor.execute("select * from domains where wpcheck=?", (2,))
-
-for ln in q:
+rows = q.fetchall()
+for ln in rows:
+    print(ln)
     domain = ln[1]
     print(domain)
     try:
@@ -37,3 +39,4 @@ for ln in q:
                     (domain, 0))
 
     connection.commit()
+
