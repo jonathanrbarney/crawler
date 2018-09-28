@@ -19,7 +19,7 @@ class DomainspiderSpider(scrapy.Spider):
         i = (0,1)[len(spltAr)>1]
         domain = spltAr[i].split("?")[0].split('/')[0].split(':')[0].lower()
 
-        for link in LinkExtractor(allow=(), deny=self.ignore_urls.append(domain)).extract_links(response):
+        for link in LinkExtractor(allow=(), deny=(self.ignore_urls + [domain])).extract_links(response):
 
             spltAr = link.url.split("://")
             i = (0, 1)[len(spltAr) > 1]
