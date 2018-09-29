@@ -7,7 +7,8 @@
 
 import sqlite3 as sqlite
 import requests
-import itertools
+from eventlet.timeout import Timeout
+
 
 connection = sqlite.connect('./wpdomains.db')
 cursor = connection.cursor()
@@ -15,28 +16,32 @@ cursor = connection.cursor()
 q = cursor.execute("select * from domains where wpcheck=?", (2,))
 rows = q.fetchall()
 for ln in rows:
-    print(ln)
-    domain = ln[1]
-    print(domain)
+    timeout = Timeout(6)
     try:
-        r = requests.get('http://'+domain+'/license.txt')
-    except:
-        pass
-    found = r.content.find(b'WordPress')+1
-    try:
-        r = requests.get('https://'+domain+'/license.txt')
-    except:
-        pass
-    found+=r.content.find(b'WordPress')+1
-    print(found)
-    if found > 0:
-        cursor.execute(
-                "replace into domains (domain, wpcheck) values (?, ?)",
-                    (domain, 1))
-    else:
-        cursor.execute(
-                "replace into domains (domain, wpcheck) values (?, ?)",
-                    (domain, 0))
+        print(ln)
+        domain = ln[1]
+        print(domain)
+        try:
+            r = requests.get('http://'+domain+'/license.txt')
+        except:
+            pass
+        found = r.content.find(b'WordPress')+1
+        try:
+            r = requests.get('https://'+domain+'/license.txt')
+        except:
+            pass
+        found+=r.content.find(b'WordPress')+1
+        print(found)
+        if found > 0:
+            cursor.execute(
+                    "replace into domains (domain, wpcheck) values (?, ?)",
+                        (domain, 1))
+        else:
+            cursor.execute(
+                    "replace into domains (domain, wpcheck) values (?, ?)",
+                        (domain, 0))
 
-    connection.commit()
+        connection.commit()
 
+    finally:
+        timeout.cancel()
